@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UEKY 游戏导航站 · gh.ueky.cn</title>
+  <meta name="description" content="uekycn-sys 的 Web 在线游戏导航页：3D 魔方大师、Sokoban Studio 推箱子、EuroHaul Web 欧洲卡车货运模拟，纯前端打造，打开即玩。" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='50%25' stop-color='%23818cf8'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230b1120'/%3E%3Cpath d='M32 14L48 23V41L32 50L16 41V23L32 14Z' fill='none' stroke='url(%23g)' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M32 14V32M32 32L48 23M32 32L16 23' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg-base: #070b14;
+      --bg-surface: #0e1525;
+      --bg-card: rgba(17, 25, 43, 0.82);
+      --bg-card-hover: rgba(22, 33, 56, 0.96);
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --border-strong: rgba(148, 163, 184, 0.28);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-amber: #f59e0b;
+      --accent-orange: #fb923c;
+      --accent-emerald: #10b981;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: dark;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient studio backdrop */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 75% 50% at 15% 0%, rgba(56, 189, 248, 0.12), transparent 60%),
+        radial-gradient(ellipse 60% 45% at 88% 12%, rgba(245, 158, 11, 0.10), transparent 55%),
+        radial-gradient(ellipse 65% 50% at 50% 100%, rgba(16, 185, 129, 0.07), transparent 60%);
+    }
+
+    .backdrop-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 85% 75% at 50% 25%, #000 35%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 25%, #000 35%, transparent 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Top Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(7, 11, 20, 0.72);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(245, 158, 11, 0.16));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-domain {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--border-subtle);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .header-pill:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      background: rgba(30, 41, 59, 0.9);
+      transform: translateY(-1px);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 44px 0 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .hero-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #7dd3fc;
+      background: rgba(56, 189, 248, 0.10);
+      border: 1px solid rgba(56, 189, 248, 0.24);
+      margin-bottom: 14px;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 2.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.65); }
+      70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(110deg, #f8fafc 10%, #7dd3fc 52%, #fbbf24 95%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .filter-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      color: var(--text-primary);
+      background: rgba(56, 189, 248, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.35);
+    }
+
+    /* Games Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+      padding-bottom: 36px;
+    }
+
+    .game-card {
+      --card-accent: #38bdf8;
+      --card-glow: rgba(56, 189, 248, 0.18);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.28s ease,
+                  box-shadow 0.28s ease,
+                  background-color 0.28s ease;
+    }
+
+    .game-card[data-theme="amber"] {
+      --card-accent: #f59e0b;
+      --card-glow: rgba(245, 158, 11, 0.18);
+    }
+
+    .game-card[data-theme="orange"] {
+      --card-accent: #fb923c;
+      --card-glow: rgba(251, 146, 60, 0.18);
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px);
+      background: var(--bg-card-hover);
+      border-color: color-mix(in srgb, var(--card-accent) 45%, transparent);
+      box-shadow: 0 22px 44px -16px rgba(0, 0, 0, 0.65),
+                  0 0 32px -8px var(--card-glow);
+    }
+
+    .game-card.is-hidden {
+      display: none;
+    }
+
+    .game-card.kbd-flash {
+      border-color: var(--card-accent);
+      box-shadow: 0 0 0 3px var(--card-glow);
+    }
+
+    /* Card Preview Image */
+    .card-thumb-link {
+      position: relative;
+      display: block;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #060a12;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .game-card:hover .card-thumb {
+      transform: scale(1.045);
+    }
+
+    .card-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 11, 20, 0.85) 0%, rgba(7, 11, 20, 0.15) 45%, rgba(7, 11, 20, 0.35) 100%);
+      pointer-events: none;
+    }
+
+    .thumb-top-bar {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #f8fafc;
+      background: rgba(7, 11, 20, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+    }
+
+    .cat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--card-accent);
+    }
+
+    .kbd-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: rgba(7, 11, 20, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .thumb-bottom-url {
+      position: absolute;
+      left: 14px;
+      bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(226, 232, 240, 0.85);
+      pointer-events: none;
+    }
+
+    /* Card Content */
+    .card-body {
+      padding: 20px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 14px;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    .card-subtitle {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--card-accent);
+      margin-top: 3px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    .controls-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(7, 11, 20, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.10);
+      border-radius: var(--radius-sm);
+      padding: 8px 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.45;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .btn-play {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 11px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #060a12;
+      background: var(--card-accent);
+      text-decoration: none;
+      transition: filter 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-play:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      color: var(--text-secondary);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-icon:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      background: rgba(30, 41, 59, 0.95);
+      transform: translateY(-1px);
+    }
+
+    /* Extra Archive Section */
+    .archive-section {
+      margin-bottom: 36px;
+    }
+
+    .archive-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 22px;
+      border-radius: 16px;
+      background: rgba(14, 21, 37, 0.65);
+      border: 1px dashed rgba(148, 163, 184, 0.22);
+    }
+
+    .archive-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .archive-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      color: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+
+    .archive-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .archive-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .archive-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .archive-link:hover {
+      background: rgba(16, 185, 129, 0.22);
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 22px 0 32px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .kbd-tip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kbd-mini {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 1040px) {
+      .games-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .hero {
+        padding: 28px 0 22px;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .kbd-tip {
+        display: none;
+      }
+
+      .header-pill span.hide-sm {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop"></div>
+  <div class="backdrop-grid"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-logo" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2.5L20.5 7.4V16.6L12 21.5L3.5 16.6V7.4L12 2.5Z" stroke="#38bdf8" stroke-width="1.8" stroke-linejoin="round" />
+            <path d="M12 2.5V12M12 12L20.5 7.4M12 12L3.5 7.4" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">UEKY 游戏导航站</span>
+          <span class="brand-domain">gh.ueky.cn</span>
+        </span>
+      </a>
+
+      <nav class="header-actions" aria-label="快捷链接">
+        <a class="header-pill" href="https://github.com/uekycn-sys" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub<span class="hide-sm"> 主页</span></span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="hero-copy">
+          <div class="status-badge">
+            <span class="pulse-dot"></span>
+            <span>3 款在线 Web 游戏 · 零安装打开即玩</span>
+          </div>
+          <h1><span class="gradient-text">Web 交互游戏实验室</span></h1>
+          <p>
+            汇集基于 <strong>Three.js</strong>、<strong>React + TypeScript</strong> 与 <strong>AI 求解算法</strong> 打造的浏览器游戏作品，内置 Web Audio 程序化音效，随时在浏览器中体验 3D 竞速、逻辑解谜与卡车驾驶。
+          </p>
+        </div>
+
+        <div class="filter-bar" role="tablist" aria-label="游戏分类筛选">
+          <button class="filter-btn active" type="button" data-filter="all" role="tab" aria-selected="true">全部作品 (3)</button>
+          <button class="filter-btn" type="button" data-filter="3d" role="tab" aria-selected="false">3D 引擎</button>
+          <button class="filter-btn" type="button" data-filter="ai" role="tab" aria-selected="false">AI 益智</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="games-grid" aria-label="游戏列表">
+      <!-- 1. 3D 魔方大师 -->
+      <article class="game-card" data-theme="blue" data-categories="3d ai" data-shortcut="1">
+        <a class="card-thumb-link" href="https://gh.ueky.cn/rubiks-cube-3d/">
+          <img class="card-thumb" src="./assets/rubiks-cube-3d.jpg" alt="3D 魔方大师游戏界面截图" loading="eager" />
+          <div class="card-thumb-overlay"></div>
+          <div class="thumb-top-bar">
+            <span class="cat-pill"><span class="cat-dot"></span>3D 竞速 · AI 教学</span>
+            <span class="kbd-badge" title="按数字键 1 快速进入">1</span>
+          </div>
+          <span class="thumb-bottom-url">/rubiks-cube-3d/</span>
+        </a>
+        <div class="card-body">
+          <div class="card-title-row">
+            <div>
+              <h2 class="card-title">3D 魔方大师</h2>
+              <div class="card-subtitle">Rubik's Cube 3D Master</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            商业级手感 3D 魔方应用。支持实景魔方涂色录入、两阶段 Kociemba 算法 AI 慢速手把手教学、20 关梯度闯关与 WCA 随机竞速计时。
+          </p>
+          <div class="tag-list">
+            <span class="tag">Three.js</span>
+            <span class="tag">Kociemba 求解</span>
+            <span class="tag">20 关闯关</span>
+            <span class="tag">4 套主题</span>
+          </div>
+          <div class="controls-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+            </svg>
+            <span>拖拽旋转 · 空格计时 · U/D/L/R/F/B 转动</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn-play" href="https://gh.ueky.cn/rubiks-cube-3d/">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>开始游戏</span>
+            </a>
+            <a class="btn-icon" href="https://gh.ueky.cn/rubiks-cube-3d/" target="_blank" rel="noopener noreferrer" title="在新标签页打开" aria-label="在新标签页打开 3D 魔方大师">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+            <a class="btn-icon" href="https://github.com/uekycn-sys/rubiks-cube-3d" target="_blank" rel="noopener noreferrer" title="查看 GitHub 仓库" aria-label="查看 rubiks-cube-3d GitHub 仓库">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2. Sokoban Studio -->
+      <article class="game-card" data-theme="amber" data-categories="ai" data-shortcut="2">
+        <a class="card-thumb-link" href="https://gh.ueky.cn/sokoban-studio/">
+          <img class="card-thumb" src="./assets/sokoban-studio.jpg" alt="Sokoban Studio 推箱子游戏界面截图" loading="eager" />
+          <div class="card-thumb-overlay"></div>
+          <div class="thumb-top-bar">
+            <span class="cat-pill"><span class="cat-dot"></span>益智解谜 · AI 求解</span>
+            <span class="kbd-badge" title="按数字键 2 快速进入">2</span>
+          </div>
+          <span class="thumb-bottom-url">/sokoban-studio/</span>
+        </a>
+        <div class="card-body">
+          <div class="card-title-row">
+            <div>
+              <h2 class="card-title">Sokoban Studio</h2>
+              <div class="card-subtitle">专业级推箱子 & AI 求解系统</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            暖暗色工作室美学推箱子。内置毫秒级 Push-based A* 宏搜索求解器，支持单步提示、全程自动演示、死局回溯以及 25 关 100% 可解大师挑战。
+          </p>
+          <div class="tag-list">
+            <span class="tag">Push-based A*</span>
+            <span class="tag">Web Worker</span>
+            <span class="tag">25 关挑战</span>
+            <span class="tag">全端触控</span>
+          </div>
+          <div class="controls-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+            </svg>
+            <span>WASD 移动 · 点击自动寻路 · H 提示 · Z 撤销</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn-play" href="https://gh.ueky.cn/sokoban-studio/">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>开始游戏</span>
+            </a>
+            <a class="btn-icon" href="https://gh.ueky.cn/sokoban-studio/" target="_blank" rel="noopener noreferrer" title="在新标签页打开" aria-label="在新标签页打开 Sokoban Studio">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+            <a class="btn-icon" href="https://github.com/uekycn-sys/sokoban-studio" target="_blank" rel="noopener noreferrer" title="查看 GitHub 仓库" aria-label="查看 sokoban-studio GitHub 仓库">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3. EuroHaul Web -->
+      <article class="game-card" data-theme="orange" data-categories="3d" data-shortcut="3">
+        <a class="card-thumb-link" href="https://gh.ueky.cn/eurohaul-web/">
+          <img class="card-thumb" src="./assets/eurohaul-web.jpg" alt="EuroHaul Web 3D 欧洲卡车驾驶模拟截图" loading="eager" />
+          <div class="card-thumb-overlay"></div>
+          <div class="thumb-top-bar">
+            <span class="cat-pill"><span class="cat-dot"></span>3D 驾驶 · 货运模拟</span>
+            <span class="kbd-badge" title="按数字键 3 快速进入">3</span>
+          </div>
+          <span class="thumb-bottom-url">/eurohaul-web/</span>
+        </a>
+        <div class="card-body">
+          <div class="card-title-row">
+            <div>
+              <h2 class="card-title">EuroHaul Web</h2>
+              <div class="card-subtitle">3D 欧洲重卡驾驶与货运模拟</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            致敬《欧卡 2》的网页端重卡模拟。100% 程序化纹理与实时柴油机声浪，涵盖阿克曼转向、半挂铰接倒车、12 档变速箱及中欧跨城货运走廊。
+          </p>
+          <div class="tag-list">
+            <span class="tag">Three.js</span>
+            <span class="tag">半挂铰接物理</span>
+            <span class="tag">12 档变速</span>
+            <span class="tag">60FPS 优化</span>
+          </div>
+          <div class="controls-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+            </svg>
+            <span>WASD 驾驶 · Space 手刹 · 1~4 视角</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn-play" href="https://gh.ueky.cn/eurohaul-web/">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>开始游戏</span>
+            </a>
+            <a class="btn-icon" href="https://gh.ueky.cn/eurohaul-web/" target="_blank" rel="noopener noreferrer" title="在新标签页打开" aria-label="在新标签页打开 EuroHaul Web">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+            <a class="btn-icon" href="https://github.com/uekycn-sys/eurohaul-web" target="_blank" rel="noopener noreferrer" title="查看 GitHub 仓库" aria-label="查看 eurohaul-web GitHub 仓库">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="archive-section" aria-label="其他收录">
+      <div class="archive-card">
+        <div class="archive-info">
+          <div class="archive-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+          </div>
+          <div>
+            <div class="archive-title">推箱子大师 · 单文件绿色版</div>
+            <div class="archive-desc">经典独立 HTML 单页版本（支持离线直接运行），保留全关卡闯关与求解功能。</div>
+          </div>
+        </div>
+        <a class="archive-link" href="./推箱子全关卡绿色版.html">
+          <span>打开经典版</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div>© 2026 uekycn-sys · Hosted on GitHub Pages</div>
+      <div class="kbd-tip">
+        <span>快捷键直达：</span>
+        <span class="kbd-mini">1</span>
+        <span class="kbd-mini">2</span>
+        <span class="kbd-mini">3</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/uekycn-sys/uekycn-sys.github.io" target="_blank" rel="noopener noreferrer">本站仓库</a>
+        <a href="https://github.com/uekycn-sys?tab=repositories" target="_blank" rel="noopener noreferrer">全部开源项目</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.game-card');
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.filter;
+
+          filterButtons.forEach((b) => {
+            const isActive = b === btn;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', String(isActive));
+          });
+
+          cards.forEach((card) => {
+            const categories = (card.dataset.categories || '').split(' ');
+            const visible = filter === 'all' || categories.includes(filter);
+            card.classList.toggle('is-hidden', !visible);
+          });
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+        const targetCard = document.querySelector(`.game-card[data-shortcut="${e.key}"]`);
+        if (!targetCard) return;
+
+        const playLink = targetCard.querySelector('.btn-play');
+        if (!playLink) return;
+
+        targetCard.classList.add('kbd-flash');
+        setTimeout(() => {
+          window.location.href = playLink.href;
+        }, 120);
+      });
+    })();
+  </script>
+</body>
+</html>
