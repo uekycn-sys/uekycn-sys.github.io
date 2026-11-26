@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><clipPath id="favClip"><rect width="512" height="512" rx="112"/></clipPath></defs><g clip-path="url(#favClip)">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="25%" r="85%">
+      <stop offset="0%" stop-color="#172544"/>
+      <stop offset="55%" stop-color="#0b1222"/>
+      <stop offset="100%" stop-color="#060911"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.32"/>
+      <stop offset="60%" stop-color="#818cf8" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="strokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="faceTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0.14"/>
+    </linearGradient>
+    <linearGradient id="faceLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#1e293b" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="faceRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.24"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="200" fill="url(#glow)"/>
+  <!-- subtle grid -->
+  <g stroke="#94a3b8" stroke-opacity="0.07" stroke-width="1.5">
+    <line x1="128" y1="0" x2="128" y2="512"/><line x1="256" y1="0" x2="256" y2="512"/><line x1="384" y1="0" x2="384" y2="512"/>
+    <line x1="0" y1="128" x2="512" y2="128"/><line x1="0" y1="256" x2="512" y2="256"/><line x1="0" y1="384" x2="512" y2="384"/>
+  </g>
+  <!-- isometric hex cube -->
+  <polygon points="256,104 388,180 256,256 124,180" fill="url(#faceTop)"/>
+  <polygon points="124,180 256,256 256,408 124,332" fill="url(#faceLeft)"/>
+  <polygon points="388,180 388,332 256,408 256,256" fill="url(#faceRight)"/>
+  <path d="M256 104 L388 180 V332 L256 408 L124 332 V180 Z" fill="none" stroke="url(#strokeGrad)" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M256 104 V256 M256 256 L388 180 M256 256 L124 180 M256 256 V408" fill="none" stroke="url(#strokeGrad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- center spark node -->
+  <circle cx="256" cy="256" r="18" fill="#f8fafc"/>
+  <circle cx="256" cy="256" r="10" fill="#38bdf8"/>
+</g></svg>

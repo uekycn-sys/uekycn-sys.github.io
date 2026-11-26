@@ -2,10 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#070b14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="UEKY 游戏" />
   <title>UEKY 游戏导航站 · gh.ueky.cn</title>
-  <meta name="description" content="uekycn-sys 的 Web 在线游戏导航页：3D 魔方大师、Sokoban Studio 推箱子、EuroHaul Web 欧洲卡车货运模拟、梦幻消消乐、PRISM TETRIS 棱镜方块、蜘蛛纸牌，纯前端打造，打开即玩。" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='50%25' stop-color='%23818cf8'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230b1120'/%3E%3Cpath d='M32 14L48 23V41L32 50L16 41V23L32 14Z' fill='none' stroke='url(%23g)' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M32 14V32M32 32L48 23M32 32L16 23' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <meta name="description" content="uekycn-sys 的 Web 在线游戏导航页：3D 魔方大师、Sokoban Studio 推箱子、EuroHaul Web 欧洲卡车货运模拟、梦幻消消乐、PRISM TETRIS 棱镜方块、蜘蛛纸牌、Sudoku Studio 数独，纯前端打造，打开即玩。" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <style>
     :root {
       --bg-base: #070b14;
@@ -647,7 +654,7 @@
         <div class="hero-copy">
           <div class="status-badge">
             <span class="pulse-dot"></span>
-            <span>6 款在线 Web 游戏 · 零安装打开即玩</span>
+            <span>7 款在线 Web 游戏 · 零安装打开即玩</span>
           </div>
           <h1><span class="gradient-text">Web 交互游戏实验室</span></h1>
           <p>
@@ -656,7 +663,7 @@
         </div>
 
         <div class="filter-bar" role="tablist" aria-label="游戏分类筛选">
-          <button class="filter-btn active" type="button" data-filter="all" role="tab" aria-selected="true">全部作品 (6)</button>
+          <button class="filter-btn active" type="button" data-filter="all" role="tab" aria-selected="true">全部作品 (7)</button>
           <button class="filter-btn" type="button" data-filter="3d" role="tab" aria-selected="false">3D 引擎</button>
           <button class="filter-btn" type="button" data-filter="ai" role="tab" aria-selected="false">AI 益智</button>
           <button class="filter-btn" type="button" data-filter="canvas" role="tab" aria-selected="false">休闲消除</button>
@@ -1005,6 +1012,63 @@
           </div>
         </div>
       </article>
+
+      <!-- 7. Sudoku Studio -->
+      <article class="game-card" data-theme="amber" data-categories="ai" data-shortcut="7">
+        <a class="card-thumb-link" href="https://gh.ueky.cn/sudoku-studio/">
+          <img class="card-thumb" src="./assets/sudoku-studio.png" alt="Sudoku Studio 数独工作室游戏界面截图" loading="eager" />
+          <div class="card-thumb-overlay"></div>
+          <div class="thumb-top-bar">
+            <span class="cat-pill"><span class="cat-dot"></span>逻辑数独 · AI 教学</span>
+            <span class="kbd-badge" title="按数字键 7 快速进入">7</span>
+          </div>
+          <span class="thumb-bottom-url">/sudoku-studio/</span>
+        </a>
+        <div class="card-body">
+          <div class="card-title-row">
+            <div>
+              <h2 class="card-title">Sudoku Studio</h2>
+              <div class="card-subtitle">专家级数独 & AI 逻辑教学系统</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            商业级数独工作室与人类逻辑教学系统。基于 Bitmask + DLX 精确求解引擎，覆盖 20 项 Tier 1–4 人类推导技巧、三段式渐进提示与矢量 SVG 强弱链图解，支持 5 档难度、每日挑战与 3 套主题。
+          </p>
+          <div class="tag-list">
+            <span class="tag">Bitmask + DLX</span>
+            <span class="tag">20 项逻辑推导</span>
+            <span class="tag">Web Worker</span>
+            <span class="tag">3 套主题</span>
+          </div>
+          <div class="controls-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+            </svg>
+            <span>点击选格 · 1~9 填数 · Shift 笔记 · H 逻辑提示</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn-play" href="https://gh.ueky.cn/sudoku-studio/">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>开始游戏</span>
+            </a>
+            <a class="btn-icon" href="https://gh.ueky.cn/sudoku-studio/" target="_blank" rel="noopener noreferrer" title="在新标签页打开" aria-label="在新标签页打开 Sudoku Studio">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+            <a class="btn-icon" href="https://github.com/uekycn-sys/sudoku-studio" target="_blank" rel="noopener noreferrer" title="查看 GitHub 仓库" aria-label="查看 sudoku-studio GitHub 仓库">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
     </section>
 
     <footer class="site-footer">
@@ -1017,6 +1081,7 @@
         <span class="kbd-mini">4</span>
         <span class="kbd-mini">5</span>
         <span class="kbd-mini">6</span>
+        <span class="kbd-mini">7</span>
       </div>
       <div class="footer-links">
         <a href="https://github.com/uekycn-sys/uekycn-sys.github.io" target="_blank" rel="noopener noreferrer">本站仓库</a>
