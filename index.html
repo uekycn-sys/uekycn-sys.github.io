@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="UEKY 游戏" />
   <title>UEKY 游戏导航站 · gh.ueky.cn</title>
-  <meta name="description" content="uekycn-sys 的 Web 在线游戏导航页：3D 魔方大师、Sokoban Studio 推箱子、EuroHaul Web 欧洲卡车货运模拟、梦幻消消乐、PRISM TETRIS 棱镜方块、蜘蛛纸牌、Sudoku Studio 数独，纯前端打造，打开即玩。" />
+  <meta name="description" content="uekycn-sys 的 Web 在线游戏导航页：3D 魔方大师、Sokoban Studio 推箱子、EuroHaul Web 欧洲卡车货运模拟、梦幻消消乐、PRISM TETRIS 棱镜方块、蜘蛛纸牌、Sudoku Studio 数独、欢乐扑克，纯前端打造，打开即玩。" />
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
@@ -654,16 +654,16 @@
         <div class="hero-copy">
           <div class="status-badge">
             <span class="pulse-dot"></span>
-            <span>7 款在线 Web 游戏 · 零安装打开即玩</span>
+            <span>8 款在线 Web 游戏 · 零安装打开即玩</span>
           </div>
           <h1><span class="gradient-text">Web 交互游戏实验室</span></h1>
           <p>
-            汇集基于 <strong>Three.js</strong>、<strong>Canvas 2D</strong>、<strong>TypeScript</strong> 与 <strong>AI 求解算法</strong> 打造的浏览器游戏作品，内置 Web Audio 程序化音效，随时在浏览器中体验 3D 竞速、逻辑解谜、卡车驾驶、童话消除与竞技方块。
+            汇集基于 <strong>Three.js</strong>、<strong>Canvas 2D</strong>、<strong>TypeScript</strong> 与 <strong>AI 求解算法</strong> 打造的浏览器游戏作品，内置 Web Audio 程序化音效，随时在浏览器中体验 3D 竞速、逻辑解谜、卡车驾驶、童话消除、竞技方块与棋牌对战。
           </p>
         </div>
 
         <div class="filter-bar" role="tablist" aria-label="游戏分类筛选">
-          <button class="filter-btn active" type="button" data-filter="all" role="tab" aria-selected="true">全部作品 (7)</button>
+          <button class="filter-btn active" type="button" data-filter="all" role="tab" aria-selected="true">全部作品 (8)</button>
           <button class="filter-btn" type="button" data-filter="3d" role="tab" aria-selected="false">3D 引擎</button>
           <button class="filter-btn" type="button" data-filter="ai" role="tab" aria-selected="false">AI 益智</button>
           <button class="filter-btn" type="button" data-filter="canvas" role="tab" aria-selected="false">休闲消除</button>
@@ -1069,6 +1069,63 @@
           </div>
         </div>
       </article>
+
+      <!-- 8. 欢乐扑克 -->
+      <article class="game-card" data-theme="emerald" data-categories="ai" data-shortcut="8">
+        <a class="card-thumb-link" href="https://gh.ueky.cn/poker/">
+          <img class="card-thumb" src="./assets/poker.png" alt="欢乐扑克游戏界面截图" loading="eager" />
+          <div class="card-thumb-overlay"></div>
+          <div class="thumb-top-bar">
+            <span class="cat-pill"><span class="cat-dot"></span>经典棋牌 · AI 教练</span>
+            <span class="kbd-badge" title="按数字键 8 快速进入">8</span>
+          </div>
+          <span class="thumb-bottom-url">/poker/</span>
+        </a>
+        <div class="card-body">
+          <div class="card-title-row">
+            <div>
+              <h2 class="card-title">欢乐扑克</h2>
+              <div class="card-subtitle">Happy Poker Club · 斗地主 &amp; 德州扑克 GTO</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            纯前端商业级多玩法棋牌大厅，涵盖《欢乐斗地主》与《德州扑克 GTO》。内置 Web Worker 异步算路、AI 实时教练与胜率条、10 道 Alpha-Beta 必胜残局、13×13 翻前范围矩阵、盲记/Outs 测验与上帝视角 EV 复盘。
+          </p>
+          <div class="tag-list">
+            <span class="tag">React 19 + TS</span>
+            <span class="tag">AI 实时教练</span>
+            <span class="tag">斗地主 + 德州</span>
+            <span class="tag">残局 &amp; EV 复盘</span>
+          </div>
+          <div class="controls-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+            </svg>
+            <span>滑动选牌 / 点击出牌 · 支持残局闯关与牌谱复盘</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn-play" href="https://gh.ueky.cn/poker/">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>开始游戏</span>
+            </a>
+            <a class="btn-icon" href="https://gh.ueky.cn/poker/" target="_blank" rel="noopener noreferrer" title="在新标签页打开" aria-label="在新标签页打开 欢乐扑克">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+            <a class="btn-icon" href="https://github.com/uekycn-sys/poker" target="_blank" rel="noopener noreferrer" title="查看 GitHub 仓库" aria-label="查看 poker GitHub 仓库">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
     </section>
 
     <footer class="site-footer">
@@ -1082,6 +1139,7 @@
         <span class="kbd-mini">5</span>
         <span class="kbd-mini">6</span>
         <span class="kbd-mini">7</span>
+        <span class="kbd-mini">8</span>
       </div>
       <div class="footer-links">
         <a href="https://github.com/uekycn-sys/uekycn-sys.github.io" target="_blank" rel="noopener noreferrer">本站仓库</a>
