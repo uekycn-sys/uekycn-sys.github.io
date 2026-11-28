@@ -3,7 +3,7 @@
  * 逻辑：基于哈希表的快速匹配 + 后缀探测
  */
 
-var proxy = "SOCKS5 127.0.0.1:12334; SOCKS 127.0.0.1:12334; DIRECT";
+var proxy = "SOCKS5 127.0.0.1:1080; SOCKS 127.0.0.1:1080; DIRECT";
 var direct = "DIRECT";
 
 var directDomains = {
